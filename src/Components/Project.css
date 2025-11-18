@@ -1,0 +1,120 @@
+.projects-wrapper {
+  text-align: center;
+  padding: 60px 0;
+}
+
+/* TOP SMALL TITLE */
+.proj-sub {
+  color: #d62828;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+/* MAIN TITLE */
+.proj-title {
+  font-size: 38px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+
+/* GRID LAYOUT */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 0 100px;
+}
+
+/* CARD STYLE */
+.project-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  height: 450px;
+  cursor: pointer;
+  background: #000;
+}
+
+/* IMAGE STYLE */
+.proj-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.35s ease;
+  position: relative;
+  z-index: 2; /* shine will appear ABOVE image */
+}
+
+/* HOVER DARKEN + ZOOM */
+.project-card:hover .proj-img {
+  filter: brightness(45%);
+  transform: scale(1.08);
+}
+
+/* OVERLAY TEXT */
+.proj-overlay {
+  position: absolute;
+  bottom: -140px;
+  left: 25px;
+  right: 25px;
+  color: #fff;
+  transition: 0.4s ease;
+  z-index: 4; /* overlay always above shine */
+}
+
+/* SLIDE UP ON HOVER */
+.project-card:hover .proj-overlay {
+  bottom: 25px;
+}
+
+/* TAG BOX */
+.proj-tag {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.18);
+  padding: 7px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(8px);
+  font-weight: 500;
+}
+
+/* TEXT INSIDE OVERLAY */
+.proj-text {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: left;
+}
+
+/* ⭐ WHITE SHINE FROM THE CORNER — FINAL PERFECT VERSION */
+.project-card::before {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(25deg);
+  transition: 0.7s ease;
+  opacity: 0;
+
+  /* ⭐ SHINE ABOVE IMAGE BUT BELOW TEXT */
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ⭐ MOVE SHINE ON HOVER */
+.project-card:hover::before {
+  top: -20%;
+  left: -20%;
+  opacity: 1;
+}
