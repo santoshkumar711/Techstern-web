@@ -24,7 +24,7 @@ export default function Footer() {
         <div style={{ width: "280px" }}>
           {/* Logo */}
           <img
-            src="https://media.licdn.com/dms/image/v2/C510BAQEj8WPvjsV4kQ/company-logo_200_200/company-logo_200_200/0/1630613567773/techstern_logo?e=2147483647&v=beta&t=Gr4q3CF070ez8p-fEdrt9b6R3VTV-Api6HCca1Ts0bs"
+            src="techstern-logo.jpg"
             alt="Techstern Logo"
             style={{ width: "150px", marginBottom: "16px" }}
           />

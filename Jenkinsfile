@@ -1,94 +1,64 @@
-
 pipeline {
     agent any
 
-    tools {
-        nodejs "Node18"
-    }
-
     environment {
-        DOCKER_HUB_USER = 'santoshkumar711'
         IMAGE_NAME = 'techstern-web'
         IMAGE_TAG = 'v1'
         CONTAINER_NAME = 'techstern-web'
+        HOST_PORT = '3000'
+        CONTAINER_PORT = '3000'
     }
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/santoshkumar711/Techstern-web.git'
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                bat 'npm install'
-            }
-        }
-
-        stage('Build Vite App') {
-            steps {
-                bat 'npm run build'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat '''
-                    docker build -t %DOCKER_HUB_USER%/%IMAGE_NAME%:%IMAGE_TAG% .
+                    docker build -t %IMAGE_NAME%:%IMAGE_TAG% .
                 '''
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Stop Old Container') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-creds',
-                        usernameVariable: 'DOCKER_USER',
-                        passwordVariable: 'DOCKER_PASS'
-                    )
-                ]) {
-                    powershell '''
-                        $env:DOCKER_PASS |
-                            docker login `
-                            --username $env:DOCKER_USER `
-                            --password-stdin
-
-                        if ($LASTEXITCODE -ne 0) {
-                            exit $LASTEXITCODE
-                        }
-                    '''
-
-                    bat '''
-                        docker push %DOCKER_HUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%
-                    '''
-                }
+                bat '''
+                    docker rm -f %CONTAINER_NAME% 2>NUL
+                    exit /b 0
+                '''
             }
         }
 
-        stage('Deploy') {
+        stage('Run Container') {
             steps {
                 bat '''
-                    docker rm -f %CONTAINER_NAME% || echo No old container
+                    docker run -d --name %CONTAINER_NAME% -p %HOST_PORT%:%CONTAINER_PORT% --restart unless-stopped %IMAGE_NAME%:%IMAGE_TAG%
                 '''
+            }
+        }
 
+        stage('Verify Container') {
+            steps {
                 bat '''
-                    docker pull %DOCKER_HUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%
-                '''
-
-                bat '''
-                    docker run -d --name %CONTAINER_NAME% -p 3000:3000 %DOCKER_HUB_USER%/%IMAGE_NAME%:%IMAGE_TAG%
+                    docker ps --filter "name=%CONTAINER_NAME%"
                 '''
             }
         }
     }
 
     post {
-        always {
-            bat 'docker image prune -f'
+        success {
+            echo 'Application deployed locally on port 3000!'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check Console Output.'
         }
     }
 }
